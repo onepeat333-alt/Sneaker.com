@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SNEAKER.COM | ULTIMATE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* TITANIUM CYBER THEME (DARK MODE DEFAULT) */
+            --bg-base: #050505;
+            --bg-panel: #111111;
+            --bg-card: #18181b;
+            --primary: #ffffff;
+            --neon-red: #ff003c;
+            --neon-blue: #00f0ff;
+            --neon-gold: #ffd700;
+            --neon-green: #00ff9d; /* NEW */
+            --text-main: #f5f5f7;
+            --text-mute: #86868b;
+            --border-light: rgba(255, 255, 255, 0.1);
+            --border-focus: rgba(255, 255, 255, 0.3);
+            --ease: cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        body.light-mode {
+            /* LIGHT MODE VARIABLES */
+            --bg-base: #f5f5f7;
+            --bg-panel: #ffffff;
+            --bg-card: #ffffff;
+            --primary: #000000;
+            --neon-red: #ff003c;
+            --neon-blue: #00f0ff;
+            --neon-gold: #ffd700;
+            --neon-green: #00ff9d;
+            --text-main: #050505;
+            --text-mute: #666666;
+            --border-light: rgba(0, 0, 0, 0.1);
+            --border-focus: rgba(0, 0, 0, 0.3);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; cursor: none; /* Hide default cursor */ }
+       
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        body.locked { overflow: hidden; }
+        h1, h2, h3, .title-font { font-family: 'Space Grotesk', sans-serif; }
+        /* --- CUSTOM CURSOR --- */
+        #cursor {
+            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+            border: 2px solid var(--neon-blue); border-radius: 50%;
+            pointer-events: none; z-index: 100000;
+            transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background 0.2s;
+            mix-blend-mode: difference;
+        }
+        #cursor.hovered { width: 50px; height: 50px; background: rgba(0, 240, 255, 0.1); border-color: var(--primary); }
+        #cursor::after {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 4px; height: 4px; background: var(--neon-red); border-radius: 50%;
+        }
+        /* --- 1. BOOT SEQUENCE --- */
+        #bootScreen {
+            position: fixed;
+            inset: 0; z-index: 99999; background: #000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        .boot-line {
+            font-family: 'Space Grotesk';
+            font-size: 16px; color: var(--neon-red);
+            letter-spacing: 4px; opacity: 0; line-height: 2; text-transform: uppercase;
+        }
+        .boot-line span { color: var(--primary); }
+        .boot-line.glitch-in { animation: cyberGlitch 1.5s forwards; }
+        @keyframes cyberGlitch {
+            0% { opacity: 0; transform: skewX(-20deg) translateX(-20px); filter: drop-shadow(0 0 10px var(--neon-red)); }
+            20% { opacity: 1; transform: skewX(0) translateX(0); }
+            80% { opacity: 1; transform: skewX(0); filter: none; }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+        /* --- BACKGROUND FX --- */
+        .bg-mesh {
+            position: fixed;
+            inset: 0; z-index: -1;
+            background: radial-gradient(circle at 50% 0%, rgba(20,20,25,1) 0%, var(--bg-base) 80%);
+        }
+        .grid-overlay {
+            position: fixed;
+            inset: 0; z-index: -1; opacity: 0.2; pointer-events: none;
+            background-image: linear-gradient(var(--border-light) 1px, transparent 1px), linear-gradient(90deg, var(--border-light) 1px, transparent 1px);
+            background-size: 50px 50px; transform: perspective(500px) rotateX(60deg) translateY(-100px);
+            animation: gridMove 15s linear infinite;
+        }
+        @keyframes gridMove { 100% { transform: perspective(500px) rotateX(60deg) translateY(100px); } }
+        /* --- BUTTONS & INPUTS --- */
+        .btn-solid {
+            width: 100%;
+            padding: 18px; background: var(--primary); color: var(--bg-base);
+            border: none; border-radius: 12px; font-weight: 800; font-size: 16px;
+            cursor: none; transition: 0.3s;
+            font-family: 'Space Grotesk'; text-transform: uppercase;
+            position: relative; overflow: hidden; letter-spacing: 1px;
+        }
+        .btn-solid:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); background: var(--neon-blue); color: var(--bg-base); }
+        .btn-solid:disabled { background: #ddd; color: #aaa; cursor: not-allowed; }
+        .btn-outline {
+            width: 100%;
+            padding: 16px; background: transparent; color: var(--primary);
+            border: 1px solid var(--border-light); border-radius: 12px; font-weight: 700;
+            cursor: none; transition: 0.3s;
+            font-family: 'Space Grotesk'; text-transform: uppercase;
+        }
+        .btn-outline:hover { border-color: var(--primary); background: rgba(0,0,0,0.05); }
+        .input-clean {
+            width: 100%;
+            padding: 16px 20px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-light);
+            color: var(--text-main); border-radius: 12px; font-family: 'Outfit'; font-size: 16px; outline: none;
+            transition: 0.3s; cursor: none;
+        }
+        .input-clean:focus { border-color: var(--primary); box-shadow: inset 0 0 15px rgba(0,0,0,0.1); }
+        /* --- AUTH SYSTEM --- */
+        #authLayer {
+            position: fixed;
+            inset: 0; z-index: 5000; display: none; align-items: center; justify-content: center;
+            background: var(--bg-base); opacity: 0; transition: opacity 0.5s var(--ease);
+        }
+        #authLayer.active { display: flex; opacity: 1; }
+       
+        .auth-box { width: 100%; max-width: 450px; padding: 50px; text-align: center; background: rgba(10,10,12,0.8); border: 1px solid var(--border-light); border-radius: 24px; backdrop-filter: blur(20px); box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
+        .logo-img { width: 120px; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(255,0,60,0.5)); }
+        .switch-link { margin-top: 25px; font-size: 14px; color: var(--text-mute); }
+        .switch-link span { color: var(--primary); font-weight: 700; cursor: none; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        .switch-link span:hover { color: var(--neon-blue); text-shadow: 0 0 10px var(--neon-blue); }
+        /* --- APP LAYER --- */
+        #appLayer { display: none; padding-top: 85px; opacity: 0; transition: opacity 0.8s var(--ease); }
+       
+        /* NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0; width: 100%; height: 85px; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center; padding: 0 5%;
+            background: rgba(5,5,5,0.85);
+            backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light);
+        }
+        .nav-brand { display: flex; align-items: center; gap: 15px; cursor: none; }
+        .nav-brand img { height: 45px; }
+        .nav-brand span { font-family: 'Space Grotesk'; font-weight: 900; font-size: 24px; letter-spacing: -0.5px; }
+        .nav-brand span i { color: var(--neon-red); font-style: normal; }
+        .nav-tools { display: flex; gap: 30px; align-items: center; }
+        .icon-btn { position: relative; cursor: none; color: var(--text-main); font-size: 24px; transition: 0.3s; }
+        .icon-btn:hover { color: var(--neon-red); transform: scale(1.15); filter: drop-shadow(0 0 10px var(--neon-red)); }
+        .badge {
+            position: absolute;
+            top: -8px; right: -12px; background: var(--neon-red); color: white;
+            font-size: 11px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; font-weight: 800; font-family: 'Space Grotesk'; box-shadow: 0 0 10px var(--neon-red);
+        }
+        /* TOOLBAR */
+        .toolbar { padding: 25px 5%; display: flex; gap: 20px; flex-wrap: wrap; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border-light); }
+        .search-wrapper { flex: 1; min-width: 250px; position: relative; }
+        .search-wrapper i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--text-mute); font-size: 18px; }
+        .search-wrapper input { padding-left: 55px; }
+       
+        .tabs { display: flex; gap: 15px; overflow-x: auto; padding: 30px 5%; scrollbar-width: none; }
+        .tab {
+            padding: 12px 30px; border-radius: 50px; border: 1px solid var(--border-light);
+            background: var(--bg-panel); color: var(--text-mute); cursor: none; white-space: nowrap;
+            font-weight: 600; font-size: 15px; transition: 0.3s;
+            letter-spacing: 1px; text-transform: uppercase;
+        }
+        .tab:hover { border-color: var(--border-focus); color: var(--primary); }
+        .tab.active { background: var(--primary); color: var(--bg-base); border-color: var(--primary); box-shadow: 0 0 20px rgba(0,0,0,0.3); font-weight: 800; }
+        /* --- PRODUCT GRID (3D TILT ENHANCED) --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 35px; padding: 0 5% 120px; }
+        .card {
+            background: var(--bg-card);
+            border-radius: 24px; padding: 30px 20px;
+            border: 1px solid var(--border-light); transition: transform 0.1s ease-out, border-color 0.4s; position: relative;
+            transform-style: preserve-3d; /* 3D ENABLED */
+        }
+        .card.disabled { opacity: 0.6; filter: grayscale(1); pointer-events: none; }
+        .card:hover { border-color: var(--neon-blue); box-shadow: 0 25px 50px rgba(0, 240, 255, 0.15); z-index: 10; }
+       
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; transform: translateZ(20px); }
+        .brand-tag { font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--text-mute); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; }
+       
+        /* STOCK BADGES */
+        .stock-badge { font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; }
+        .stock-badge.low { color: var(--neon-red); border: 1px solid var(--neon-red); animation: blink 2s infinite; }
+        .stock-badge.out { background: var(--neon-red); color: var(--bg-base); }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .wishlist-btn { color: var(--border-light); cursor: none; font-size: 22px; transition: 0.3s; z-index: 10; }
+        .wishlist-btn:hover { color: var(--primary); transform: scale(1.1); }
+        .wishlist-btn.active { color: var(--neon-red); filter: drop-shadow(0 0 10px var(--neon-red)); }
+        .card-img { width: 100%; height: 180px; display: flex; align-items: center; justify-content: center; cursor: none; transform: translateZ(40px); }
+        .card img { width: 95%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 20px 20px rgba(0,0,0,0.8)); transition: 0.6s var(--ease); }
+        .card:hover img { transform: scale(1.15) rotate(-8deg); filter: drop-shadow(0 40px 40px rgba(0, 240, 255, 0.3)); }
+       
+        .card-name { font-size: 20px; font-weight: 700; margin: 15px 0 10px; cursor: none; line-height: 1.2; transform: translateZ(30px); }
+        .card-rating { font-size: 12px; color: var(--neon-gold); margin-bottom: 15px; display: flex; align-items: center; gap: 5px; transform: translateZ(20px); }
+        .card-rating span { color: var(--text-mute); }
+       
+        .card-bottom { display: flex; justify-content: space-between; align-items: center; transform: translateZ(30px); }
+        .card-price { font-size: 24px; font-weight: 800; font-family: 'Space Grotesk'; }
+       
+        .add-btn-small {
+            background: var(--primary);
+            color: var(--bg-base); width: 45px; height: 45px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: none; transition: 0.3s; border: none;
+            font-size: 18px;
+        }
+        .add-btn-small:hover { transform: scale(1.1) rotate(90deg); background: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); }
+        /* --- GLOBAL OVERLAYS & DRAWERS --- */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        .overlay.active { opacity: 1; pointer-events: auto; }
+        /* DRAWERS */
+        .drawer {
+            position: fixed; top: 0; right: -100%; width: 480px; height: 100vh;
+            background: rgba(10,10,12,0.95); backdrop-filter: blur(30px); border-left: 1px solid var(--border-light);
+            z-index: 7000; padding: 40px;
+            transition: transform 0.6s var(--ease);
+            display: flex; flex-direction: column; box-shadow: -30px 0 80px rgba(0,0,0,0.9);
+        }
+        .drawer.active { transform: translateX(-100%); right: 0; }
+       
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
+        .drawer-header h2 { font-size: 28px; letter-spacing: 1px; }
+        .close-drawer { cursor: none; font-size: 28px; color: var(--text-mute); transition: 0.3s; }
+        .close-drawer:hover { color: var(--neon-red); transform: rotate(90deg); }
+        /* PRODUCT MODAL */
+        .product-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -45%) scale(0.95);
+            width: 100%; max-width: 950px; background: var(--bg-card); border-radius: 24px;
+            z-index: 6500; display: flex;
+            opacity: 0; pointer-events: none; transition: all 0.4s var(--ease);
+            border: 1px solid var(--border-light); overflow: hidden; box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+        }
+        .product-modal.active { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+       
+        .p-left { flex: 1.2; background: radial-gradient(circle, rgba(0,240,255,0.1) 0%, rgba(0,0,0,0.9) 80%); display: flex; align-items: center; justify-content: center; padding: 50px; position: relative; }
+        .p-left img { width: 100%; filter: drop-shadow(0 40px 50px rgba(0,0,0,0.8)); animation: floatShoe 6s infinite ease-in-out; }
+        @keyframes floatShoe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+       
+        .p-right { flex: 1; padding: 50px 40px; display: flex; flex-direction: column; position: relative; }
+       
+        .size-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0 40px; }
+        .size-box {
+            padding: 15px 0; text-align: center; border: 1px solid var(--border-light); border-radius: 12px;
+            cursor: none; transition: 0.3s; font-weight: 700; font-family: 'Space Grotesk'; font-size: 16px;
+            background: rgba(0,0,0,0.5);
+        }
+        .size-box:hover:not(.disabled) { border-color: var(--border-focus); background: rgba(255,255,255,0.05); }
+        .size-box.selected { background: var(--primary); color: var(--bg-base); border-color: var(--primary); box-shadow: 0 0 15px rgba(255,255,255,0.2); transform: scale(1.05); }
+        .size-box.disabled { opacity: 0.15; cursor: not-allowed; text-decoration: line-through; background: transparent; }
+        /* --- CART ITEMS & PROMO --- */
+        .cart-items { flex: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 20px; scrollbar-width: none; }
+        .c-item { display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-light); }
+        .c-item img { width: 80px; height: 80px; object-fit: contain; background: #050505; border-radius: 12px; padding: 10px; border: 1px solid var(--border-light); }
+        .c-info { flex: 1; }
+        .c-title { font-weight: 800; font-size: 16px; margin-bottom: 4px; font-family: 'Space Grotesk'; }
+        .c-meta { font-size: 13px; color: var(--text-mute); margin-bottom: 10px; }
+        .c-price-row { display: flex; justify-content: space-between; align-items: center; }
+       
+        .qty-ctrl { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-light); padding: 4px 10px; border-radius: 50px; width: fit-content; }
+        .qty-ctrl i { cursor: none; color: var(--text-mute); font-size: 12px; transition: 0.2s; padding: 2px; }
+        .qty-ctrl i:hover { color: var(--primary); }
+        .qty-ctrl span { font-weight: 800; font-size: 14px; width: 20px; text-align: center; font-family: 'Space Grotesk'; }
+        .promo-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        .promo-box input { flex: 1; padding: 12px 15px; background: rgba(255,255,255,0.1); border: 1px solid var(--border-light); color: var(--text-main); border-radius: 12px; outline: none; text-transform: uppercase; font-weight: 700; letter-spacing: 2px; }
+        .promo-box button { padding: 0 20px; background: rgba(0,0,0,0.3); color: var(--primary); border: none; border-radius: 12px; cursor: none; font-weight: 800; transition: 0.3s; font-family: 'Space Grotesk'; }
+        .promo-box button:hover { background: var(--primary); color: var(--bg-base); }
+       
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px; color: var(--text-mute); }
+        .summary-total { display: flex; justify-content: space-between; margin: 20px 0; font-size: 26px; font-weight: 800; color: var(--text-main); border-top: 1px solid var(--border-light); padding-top: 20px; font-family: 'Space Grotesk'; }
+        /* --- PROFILE (XP SYSTEM) --- */
+        .history-item { background: rgba(0,0,0,0.5); border: 1px solid var(--border-light); border-radius: 16px; padding: 20px; margin-bottom: 15px; transition: 0.3s; }
+        .history-item:hover { border-color: var(--neon-blue); }
+        .history-header { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; color: var(--text-mute); border-bottom: 1px solid rgba(0,0,0,0.3); padding-bottom: 15px; }
+        .xp-container { margin: 20px 0; }
+        .xp-bar-bg { width: 100%; height: 6px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; position: relative; }
+        .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-green)); width: 0%; transition: width 1s ease; box-shadow: 0 0 10px var(--neon-green); }
+        .xp-text { font-size: 12px; color: var(--text-mute); margin-top: 8px; display: flex; justify-content: space-between; }
+        /* --- CHECKOUT FX (HOLD TO CONFIRM) --- */
+        #checkoutOverlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999;
+            display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;
+            opacity: 0; pointer-events: none; transition: 0.4s; backdrop-filter: blur(20px);
+        }
+        #checkoutOverlay.active { opacity: 1; pointer-events: auto; }
+       
+        .hold-btn {
+            margin-top: 30px; padding: 20px 50px; border: 2px solid var(--neon-red);
+            color: var(--neon-red); border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 900;
+            cursor: none; position: relative; overflow: hidden; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 3px; font-size: 18px;
+            user-select: none; -webkit-user-select: none;
+        }
+        .hold-btn::before {
+            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+            background: var(--neon-red); z-index: -1; transition: width 2s linear;
+        }
+        .hold-btn.holding { color: var(--bg-base); box-shadow: 0 0 30px rgba(255,0,60,0.6); transform: scale(0.95); }
+        .hold-btn.holding::before { width: 100%; }
+        .scan-icon { font-size: 80px; color: var(--primary); margin-bottom: 20px; transition: 0.5s; }
+        .scan-icon.scanning { animation: retinalScan 1.5s infinite alternate; color: var(--neon-blue); filter: drop-shadow(0 0 30px var(--neon-blue)); }
+        .scan-icon.success { color: #10b981; filter: drop-shadow(0 0 40px #10b981); transform: scale(1.2); }
+        @keyframes retinalScan { 0% { transform: scale(0.9); } 100% { transform: scale(1.1); } }
+        /* --- TOAST --- */
+        #toast {
+            position: fixed; bottom: 40px; left: 50%; transform: translate(-50%, 100px);
+            background: var(--primary); color: var(--bg-base); padding: 14px 30px; border-radius: 50px;
+            font-weight: 800; font-size: 16px; z-index: 9999; opacity: 0; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 15px; box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            pointer-events: none; font-family: 'Space Grotesk'; text-transform: uppercase; letter-spacing: 1px;
+        }
+        #toast.show { transform: translate(-50%, 0); opacity: 1; }
+        /* --- RESPONSIVE --- */
+        @media(max-width: 768px) {
+            #cursor { display: none; }
+            * { cursor: auto; }
+            .navbar { padding: 0 15px; height: 70px; }
+            #appLayer { padding-top: 70px; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 15px 120px; }
+            .card { padding: 15px; border-radius: 16px; }
+            .card img { height: 110px; }
+            .card-name { font-size: 14px; }
+            .card-price { font-size: 18px; }
+            .drawer { width: 100%; border-left: none; }
+            .product-modal {
+                flex-direction: column; top: auto; bottom: 0; left: 0; transform: translateY(100%);
+                border-radius: 30px 30px 0 0; max-height: 90vh; overflow-y: auto; max-width: 100%;
+            }
+            .product-modal.active { transform: translateY(0); }
+            .p-left { padding: 30px 20px; }
+            .p-left img { max-height: 220px; }
+            .p-right { padding: 30px 20px; }
+            .size-grid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        }
+        /* --- LIGHT MODE ADJUSTMENTS --- */
+        body.light-mode .navbar { background: rgba(255,255,255,0.85); border-bottom-color: var(--border-light); }
+        body.light-mode .toolbar { background: rgba(255,255,255,0.3); border-bottom-color: var(--border-light); }
+        body.light-mode .auth-box { background: rgba(255,255,255,0.8); box-shadow: 0 30px 60px rgba(0,0,0,0.2); }
+        body.light-mode .auth-box h1 { color: var(--text-main); }
+        body.light-mode .auth-box p { color: var(--text-mute); }
+        body.light-mode .switch-link { color: var(--text-mute); }
+        body.light-mode .switch-link span { color: var(--primary); }
+        body.light-mode .switch-link span:hover { color: var(--neon-blue); }
+        body.light-mode .input-clean { background: rgba(255,255,255,0.6); color: var(--text-main); }
+        body.light-mode .btn-solid { background: var(--primary); color: var(--bg-base); }
+        body.light-mode .btn-solid:hover { background: var(--neon-blue); color: var(--bg-base); box-shadow: 0 10px 30px rgba(0,240,255,0.3); }
+        body.light-mode .btn-outline { color: var(--primary); border-color: var(--border-light); }
+        body.light-mode .btn-outline:hover { background: rgba(0,0,0,0.05); border-color: var(--primary); }
+        body.light-mode .tab { background: #f0f0f0; color: #333; border-color: #ddd; }
+        body.light-mode .tab:hover { color: black; border-color: #aaa; }
+        body.light-mode .tab.active { background: var(--primary); color: var(--bg-base); box-shadow: 0 0 20px rgba(0,0,0,0.2); }
+        body.light-mode .card { background: white; border-color: #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        body.light-mode .card:hover { box-shadow: 0 25px 50px rgba(0,240,255,0.15); }
+        body.light-mode .card-name { color: var(--text-main); }
+        body.light-mode .brand-tag { background: rgba(0,0,0,0.05); color: var(--text-mute); }
+        body.light-mode .stock-badge.out { color: var(--bg-base); }
+        body.light-mode .wishlist-btn { color: #ccc; }
+        body.light-mode .wishlist-btn:hover { color: black; }
+        body.light-mode .wishlist-btn.active { color: var(--neon-red); filter: drop-shadow(0 0 10px var(--neon-red)); }
+        body.light-mode .card img { filter: drop-shadow(0 20px 20px rgba(0,0,0,0.2)); }
+        body.light-mode .card:hover img { filter: drop-shadow(0 40px 40px rgba(0,240,255,0.3)); }
+        body.light-mode .add-btn-small { background: var(--primary); color: var(--bg-base); }
+        body.light-mode .drawer { background: rgba(255,255,255,0.95); border-left-color: #ddd; box-shadow: -30px 0 80px rgba(0,0,0,0.2); color: var(--text-main); }
+        body.light-mode .drawer-header h2 { color: var(--text-main); }
+        body.light-mode .close-drawer { color: var(--text-mute); }
+        body.light-mode .c-item { border-bottom-color: var(--border-light); }
+        body.light-mode .c-item img { background: #f5f5f5; border-color: #ddd; }
+        body.light-mode .c-title { color: var(--text-main); }
+        body.light-mode .qty-ctrl { background: rgba(255,255,255,0.3); border-color: #ddd; }
+        body.light-mode .qty-ctrl i { color: var(--text-mute); }
+        body.light-mode .qty-ctrl span { color: var(--text-main); }
+        body.light-mode .promo-box input { background: rgba(255,255,255,0.6); color: var(--text-main); }
+        body.light-mode .promo-box button { background: #eee; color: black; }
+        body.light-mode .promo-box button:hover { background: var(--primary); color: var(--bg-base); }
+        body.light-mode #promoMsg { color: var(--neon-blue); }
+        body.light-mode .summary-row { color: var(--text-mute); }
+        body.light-mode .summary-total { color: var(--text-main); border-top-color: var(--border-light); }
+        body.light-mode #cDisc { color: var(--neon-blue); }
+        body.light-mode .history-item { background: rgba(255,255,255,0.5); border-color: var(--border-light); }
+        body.light-mode .history-header { color: var(--text-mute); border-bottom-color: #ddd; }
+        body.light-mode .xp-bar-bg { background: #ddd; }
+        body.light-mode .xp-text { color: var(--text-mute); }
+        body.light-mode .product-modal { background: var(--bg-card); box-shadow: 0 50px 100px rgba(0,0,0,0.2); }
+        body.light-mode .p-left { background: radial-gradient(circle, rgba(0,240,255,0.1) 0%, rgba(255,255,255,0.9) 80%); }
+        body.light-mode .p-left img { filter: drop-shadow(0 40px 50px rgba(0,0,0,0.2)); }
+        body.light-mode .p-price { color: var(--text-main); }
+        body.light-mode .size-box { background: rgba(255,255,255,0.5); color: var(--text-main); }
+        body.light-mode .size-box.selected { box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+        body.light-mode #checkoutOverlay { background: rgba(255,255,255,0.95); }
+        body.light-mode .hold-btn { color: var(--neon-red); border-color: var(--neon-red); }
+        body.light-mode .hold-btn.holding { color: white; }
+        body.light-mode #toast { background: var(--primary); color: var(--bg-base); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+        body.light-mode .bg-mesh { background: radial-gradient(circle at 50% 0%, rgba(240,240,245,1) 0%, var(--bg-base) 80%); }
+        body.light-mode .grid-overlay { opacity: 0.1; }
+        /* --- PAYMENT FORM --- */
+        .payment-form { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; margin: 20px 0; }
+        .payment-form label { font-size: 14px; color: var(--text-mute); margin-bottom: 5px; display: block; }
+        .payment-form input { width: 100%; }
+        .payment-form .expiry-cvv { display: flex; gap: 15px; }
+        .payment-form .expiry-cvv div { flex: 1; }
+        .payment-error { color: var(--neon-red); font-size: 14px; margin-top: 10px; text-align: center; display: none; }
+    </style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="bootScreen">
+    <div class="boot-line" id="b1">BOOTING OMEGA PROTOCOL...</div>
+    <div class="boot-line" id="b2" style="margin-top:15px;">SYSTEM ENGINEER: <span>IHAVE</span></div>
+    <div class="boot-line" id="b3">CORE ARCHITECTURE: <span>TIMESUDLNW</span></div>
+    <div class="boot-line" id="b4">SECURITY PROTOCOL: <span>AKITUAHOD</span></div>
+    <div class="boot-line" id="b5" style="margin-top:30px; color:white; font-size:28px;">ACCESS GRANTED</div>
+</div>
+<div class="bg-mesh"></div>
+<div class="grid-overlay"></div>
+<div id="toast"><i class="fas fa-bolt"></i> <span id="toastMsg">Success</span></div>
+<div class="overlay" id="globalOverlay" onclick="UI.closeAll()"></div>
+<div id="authLayer">
+    <div class="auth-box" id="loginForm">
+        <img src="https://img5.pic.in.th/file/secure-sv1/Gemini_Generated_Image_3ibgb03ibgb03ibg-removebg-preview.png" class="logo-img">
+        <h1 class="title-font" style="font-size:32px; margin-bottom:8px;">WELCOME BACK</h1>
+        <p style="color:var(--text-mute); margin-bottom:30px; font-size:15px;">Sign in to your premium vault.</p>
+       
+        <input type="text" id="lUser" class="input-clean" placeholder="Collector ID" autocomplete="off" style="margin-bottom:15px;">
+        <input type="password" id="lPass" class="input-clean" placeholder="Passcode" style="margin-bottom:30px;">
+       
+        <button class="btn-solid" id="loginBtn" onclick="Auth.login()">SIGN IN</button>
+        <div class="switch-link">New to SNEAKER.COM? <span onclick="UI.switchAuth('reg')">Apply for ID</span></div>
+    </div>
+    <div class="auth-box" id="regForm" style="display:none;">
+        <img src="https://img5.pic.in.th/file/secure-sv1/Gemini_Generated_Image_3ibgb03ibgb03ibg-removebg-preview.png" class="logo-img">
+        <h1 class="title-font" style="font-size:32px; margin-bottom:8px;">BECOME A MEMBER</h1>
+        <p style="color:var(--text-mute); margin-bottom:30px; font-size:15px;">Create your exclusive identity.</p>
+       
+        <input type="text" id="rUser" class="input-clean" placeholder="Choose Collector ID" autocomplete="off" style="margin-bottom:15px;">
+        <input type="password" id="rPass" class="input-clean" placeholder="Set Passcode" style="margin-bottom:30px;">
+       
+        <button class="btn-solid" onclick="Auth.register()">CREATE IDENTITY</button>
+        <div class="switch-link">Already have an ID? <span onclick="UI.switchAuth('login')">Sign In</span></div>
+    </div>
+</div>
+<div id="appLayer">
+    <nav class="navbar">
+        <div class="nav-brand" onclick="App.reset()">
+            <img src="https://img5.pic.in.th/file/secure-sv1/Gemini_Generated_Image_3ibgb03ibgb03ibg-removebg-preview.png">
+            <span>SNEAKER<i>.COM</i></span>
+        </div>
+        <div class="nav-tools">
+            <div class="icon-btn" onclick="UI.openDrawer('wishlistDrawer')"><i class="far fa-heart"></i><div class="badge" id="wishBadge" style="display:none;">0</div></div>
+            <div class="icon-btn" onclick="UI.openDrawer('profileDrawer')"><i class="far fa-user"></i></div>
+            <div class="icon-btn" onclick="UI.openDrawer('cartDrawer')">
+                <i class="fas fa-shopping-bag"></i>
+                <div class="badge" id="cartBadge">0</div>
+            </div>
+            <div class="icon-btn" onclick="UI.toggleTheme()"><i class="fas fa-moon"></i></div>
+        </div>
+    </nav>
+    <div class="toolbar">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" class="input-clean" placeholder="Search sneakers..." oninput="App.applyFilters()">
+        </div>
+        <select id="sortInput" class="input-clean" style="width:auto; padding-left:20px; cursor:none;" onchange="App.applyFilters()">
+            <option value="def">Sort: Featured</option>
+            <option value="low">Price: Low to High</option>
+            <option value="high">Price: High to Low</option>
+        </select>
+    </div>
+    <div class="tabs">
+        <div class="tab active" onclick="App.setBrand('all', this)">All Sneakers</div>
+        <div class="tab" onclick="App.setBrand('puma', this)">Puma</div>
+        <div class="tab" onclick="App.setBrand('nike', this)">Nike</div>
+        <div class="tab" onclick="App.setBrand('asics', this)">Asics</div>
+        <div class="tab" onclick="App.setBrand('vans', this)">Vans</div>
+        <div class="tab" onclick="App.setBrand('converse', this)">Converse</div>
+    </div>
+    <div class="grid" id="productGrid"></div>
+</div>
+<div class="product-modal" id="productModal">
+    <div class="p-left"><img id="mImg" src=""></div>
+    <div class="p-right">
+        <i class="fas fa-times close-drawer" style="position:absolute; top:30px; right:30px;" onclick="UI.closeAll()"></i>
+       
+        <div class="brand-tag" id="mBrand" style="color:var(--neon-blue); margin-bottom:10px;">BRAND</div>
+        <h1 class="title-font" style="font-size:36px; line-height:1.1; margin-bottom:15px;" id="mName">Product Name</h1>
+       
+        <div class="card-rating" style="margin-bottom:25px; font-size:15px; color:var(--neon-gold);">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span id="mReviews" style="color:var(--text-mute); margin-left:8px;">(0 Reviews)</span>
+        </div>
+       
+        <div class="p-price title-font" id="mPrice" style="font-size:36px; margin-bottom:35px;">฿0</div>
+       
+        <div style="display:flex; justify-content:space-between; font-size:15px; margin-bottom:15px; color:var(--text-mute); font-weight:600;">
+            <span>Select Size (EU)</span>
+            <span style="text-decoration:underline; cursor:none; color:var(--primary);" onclick="alert('System: Ihave\nSize Guide Active.')"><i class="fas fa-ruler-horizontal"></i> Size Guide</span>
+        </div>
+        <div class="size-grid" id="sizeGrid"></div>
+       
+        <div style="display:flex; gap:15px; margin-top:auto;">
+            <button class="btn-outline" style="width:75px; border-radius:12px; font-size:22px;" id="mWishBtn" onclick="Wishlist.toggleModal()"><i class="far fa-heart"></i></button>
+            <button class="btn-solid" id="addBtn" onclick="Cart.add()" disabled>Select a Size</button>
+        </div>
+    </div>
+</div>
+<div class="drawer" id="cartDrawer">
+    <div class="drawer-header">
+        <h2 class="title-font">Your Bag</h2>
+        <i class="fas fa-times close-drawer" onclick="UI.closeAll()"></i>
+    </div>
+   
+    <div class="cart-items" id="cartList"></div>
+   
+    <div>
+        <div class="promo-box">
+            <input type="text" id="promoInput" placeholder="Enter Promo Code">
+            <button onclick="Cart.applyPromo()">APPLY</button>
+        </div>
+        <div id="promoMsg" style="color:var(--neon-blue); font-size:14px; margin-top:-10px; margin-bottom:25px; font-weight:800; display:none; letter-spacing:1px; text-transform:uppercase;">Promo Applied!</div>
+        <div class="summary-row"><span>Subtotal</span> <span id="cSub">฿0</span></div>
+        <div class="summary-row"><span>Discount</span> <span id="cDisc" style="color:var(--neon-blue);">฿0</span></div>
+        <div class="summary-total title-font"><span>Total</span> <span id="cTotal">฿0</span></div>
+        <button class="btn-solid" onclick="Checkout.init()">SECURE CHECKOUT</button>
+    </div>
+</div>
+<div class="drawer" id="wishlistDrawer">
+    <div class="drawer-header">
+        <h2 class="title-font">Saved Items</h2>
+        <i class="fas fa-times close-drawer" onclick="UI.closeAll()"></i>
+    </div>
+    <div class="cart-items" id="wishList"></div>
+</div>
+<div class="drawer" id="profileDrawer">
+    <div class="drawer-header">
+        <h2 class="title-font">My Account</h2>
+        <i class="fas fa-times close-drawer" onclick="UI.closeAll()"></i>
+    </div>
+    <div style="text-align:center; margin-bottom:30px;">
+        <div style="width:100px; height:100px; background:#222; border-radius:50%; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; font-size:40px; color:white; border: 2px solid var(--neon-gold); box-shadow: 0 0 20px rgba(255,215,0,0.2);"><i class="fas fa-user-astronaut"></i></div>
+        <h3 id="profileName" style="text-transform:uppercase; font-size:28px; letter-spacing:2px; font-family:'Space Grotesk';">USER</h3>
+       
+        <div class="xp-container">
+            <div class="xp-bar-bg">
+                <div class="xp-bar-fill" id="xpFill"></div>
+            </div>
+            <div class="xp-text">
+                <span id="lvlLabel" style="color:var(--neon-green); font-weight:bold;">LVL 1: ROOKIE</span>
+                <span id="xpLabel">0 / 500 XP</span>
+            </div>
+        </div>
+       
+        <p style="color:var(--text-mute); font-size:12px; margin-top:15px; letter-spacing: 1px;">SYSTEM CORE BY TIMESUDLNW & IHAVE</p>
+    </div>
+   
+    <h3 style="margin-bottom:20px; font-size:18px; border-bottom:1px solid #333; padding-bottom:12px; font-family:'Space Grotesk';">Order History</h3>
+    <div class="cart-items" id="orderHistory" style="flex:none; height:220px;"></div>
+    <button class="btn-outline" style="margin-top:auto; border-color:var(--neon-red); color:var(--neon-red);" onclick="Auth.logout()">SIGN OUT</button>
+</div>
+<div id="checkoutOverlay">
+    <i class="fas fa-fingerprint scan-icon" id="chkIcon"></i>
+    <h2 class="title-font" id="chkText" style="letter-spacing:3px; font-size: 28px;">PAYMENT GATEWAY</h2>
+    <div id="chkSub">
+        <div class="payment-form" id="paymentForm">
+            <label for="cardNumber">Card Number</label>
+            <input type="text" id="cardNumber" class="input-clean" placeholder="1234 5678 9012 3456" maxlength="19">
+            <div class="expiry-cvv">
+                <div>
+                    <label for="expiry">Expiry Date</label>
+                    <input type="text" id="expiry" class="input-clean" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div>
+                    <label for="cvv">CVV</label>
+                    <input type="text" id="cvv" class="input-clean" placeholder="123" maxlength="4">
+                </div>
+            </div>
+            <div id="paymentError" class="payment-error">Invalid card details. Please try again.</div>
+            <button class="btn-solid" id="payBtn" onclick="Checkout.processPayment()">PAY NOW</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ================= CUSTOM CURSOR ================= */
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', (e) => {
+    cursor.style.top = e.clientY + 'px';
+    cursor.style.left = e.clientX + 'px';
+});
+// Hover effects
+document.addEventListener('mouseover', (e) => {
+    if(e.target.tagName === 'BUTTON' || e.target.closest('.card') || e.target.tagName === 'INPUT' || e.target.classList.contains('tab') || e.target.classList.contains('icon-btn') || e.target.tagName === 'A') {
+        cursor.classList.add('hovered');
+    } else {
+        cursor.classList.remove('hovered');
+    }
+});
+document.addEventListener('mousedown', () => cursor.style.transform = 'translate(-50%, -50%) scale(0.8)');
+document.addEventListener('mouseup', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
+/* ================= BOOT SEQUENCE ================= */
+window.onload = () => {
+    const lines = ['b1', 'b2', 'b3', 'b4', 'b5'];
+    lines.forEach((id, index) => {
+        setTimeout(() => { document.getElementById(id).classList.add('glitch-in'); }, 400 * (index + 1));
+    });
+    setTimeout(() => {
+        const boot = document.getElementById('bootScreen');
+        boot.style.opacity = '0';
+        setTimeout(() => { boot.style.display = 'none'; Auth.init(); }, 800);
+    }, 3500);
+};
+/* ================= 1. DATABASE (With Stock System) ================= */
+// Generating random stock for realism
+const generateStock = () => Math.floor(Math.random() * 15);
+const DB = [
+    { id: 'p1', b: 'puma', n: 'Speedcat OG Black', p: 3900, i: 'https://img2.pic.in.th/OIP-removebg-previewbb8e0ea7ea916428.png', s: [38,39,40,41,42], r: 4.8, rc: 124 },
+    { id: 'p2', b: 'puma', n: 'Speedcat Green', p: 3900, i: 'https://img2.pic.in.th/th-removebg-preview.png', s: [40,41,42,43,44], r: 4.5, rc: 89 },
+    { id: 'p3', b: 'puma', n: 'Speedcat OG Red', p: 4200, i: 'https://img5.pic.in.th/file/secure-sv1/OIP__1_-removebg-preview398c9d71326776a6.png', s: [38,39,41,42], r: 4.9, rc: 210 },
+    { id: 'p4', b: 'puma', n: 'Speedcat OG Pink', p: 4200, i: 'https://img5.pic.in.th/file/secure-sv1/puma-PINK-Speedcat-Sparco-Og-removebg-preview.png', s: [38,39,40], r: 4.7, rc: 156 },
+    { id: 'n1', b: 'nike', n: 'Jordan 1 Low Black', p: 4500, i: 'https://img5.pic.in.th/file/secure-sv1/messageImage_1770798714337-removebg-preview.png', s: [41,42,43,44,45], r: 4.9, rc: 342 },
+    { id: 'n2', b: 'nike', n: 'Jordan 1 Low Gray', p: 4500, i: 'https://img2.pic.in.th/S4d56e26e9ec641bf9c6371060c1c3502K-removebg-preview.png', s: [39,40,41,42,43], r: 4.6, rc: 112 },
+    { id: 'n3', b: 'nike', n: 'Jordan 1 Low Black Toe', p: 5200, i: 'https://img2.pic.in.th/messageImage_1770798882682-removebg-preview.png', s: [42,43,44], r: 5.0, rc: 450 },
+    { id: 'n4', b: 'nike', n: 'Jordan 1 Low Pink', p: 4900, i: 'https://img5.pic.in.th/file/secure-sv1/download-removebg-preview321fd3bc09f9c3a4.png', s: [38,39,40,41], r: 4.8, rc: 231 },
+    { id: 'a1', b: 'asics', n: 'Superblast 2 Blue', p: 7200, i: 'https://img2.pic.in.th/asics-superblast-2-rev-online-2746457-removebg-preview.png', s: [40,41,42,43,44,45], r: 4.9, rc: 189 },
+    { id: 'a2', b: 'asics', n: 'Gel-Venture Grey', p: 2900, i: 'https://img5.pic.in.th/file/secure-sv1/asics-gel-terrain-seal-grey-1-removebg-preview.png', s: [38,39,40,41,42], r: 4.4, rc: 67 },
+    { id: 'a3', b: 'asics', n: 'Metaride Black Red', p: 8500, i: 'https://img2.pic.in.th/s-l1200-removebg-preview.png', s: [41,42,43,44], r: 4.7, rc: 94 },
+    { id: 'a4', b: 'asics', n: 'Sonicblast Citron', p: 4500, i: 'https://img5.pic.in.th/file/secure-sv1/1011C083_750_SL_LT_GLB-removebg-preview.png', s: [39,40,41,42,44], r: 4.5, rc: 82 },
+    { id: 'v1', b: 'vans', n: 'Vans Old Skool DX', p: 2800, i: 'https://img5.pic.in.th/file/secure-sv1/vans-old-skool-36-dx-black-white-1-removebg-preview.png', s: [38,39,40,41,42,43,44,45], r: 4.8, rc: 521 },
+    { id: 'v2', b: 'vans', n: 'Vans Slip On Classic', p: 2500, i: 'https://img5.pic.in.th/file/secure-sv1/vans-classic-slip-on-shoes-black-white-1-removebg-preview.png', s: [38,39,40,41,42,43], r: 4.7, rc: 412 },
+    { id: 'v3', b: 'vans', n: 'Vans Knu Skool', p: 3200, i: 'https://img2.pic.in.th/9991-VAS0009QC6BT00510H-1-removebg-preview.png', s: [40,41,42,43,44], r: 4.9, rc: 289 },
+    { id: 'v4', b: 'vans', n: 'Vans Sk8-Low Blue', p: 2900, i: 'https://img5.pic.in.th/file/secure-sv1/40e6f204-70f4-fe6e-ab46-62442058bc4d-removebg-preview.png', s: [39,40,41,42], r: 4.6, rc: 145 },
+    { id: 'c1', b: 'converse', n: 'Chuck 70 High Black', p: 2600, i: 'https://img5.pic.in.th/file/secure-sv1/a09226cm_f4bkxx_1-removebg-preview.png', s: [38,39,40,41,42,43,44], r: 4.8, rc: 632 },
+    { id: 'c2', b: 'converse', n: 'Chuck 70 Low White', p: 2600, i: 'https://img5.pic.in.th/file/secure-sv1/M7652C_01-scaled-removebg-preview.png', s: [38,39,40,41,42,43], r: 4.7, rc: 421 },
+    { id: 'c3', b: 'converse', n: 'Chuck 70 Green', p: 2800, i: 'https://img5.pic.in.th/file/secure-sv1/a09470c-386_1-removebg-preview.png', s: [40,41,42,43,44,45], r: 4.6, rc: 189 },
+    { id: 'c4', b: 'converse', n: 'Chuck 70 Grey', p: 2800, i: 'https://img2.pic.in.th/converse-chuck-70-low-iron-grey-1-removebg-preview.png', s: [39,40,41,42,43], r: 4.5, rc: 134 }
+];
+// Add Stock to DB
+DB.forEach(item => { item.stock = generateStock(); });
+const ALL_SIZES = [38, 39, 40, 41, 42, 43, 44, 45];
+/* ================= 2. STATE MANAGEMENT ================= */
+const State = {
+    user: null, cart: [], wishlist: [], orders: [], xp: 0,
+    brand: 'all', search: '', sort: 'def',
+    promoMult: 1, activeItem: null, activeSize: null
+};
+/* ================= 3. LOGIC & FUNCTIONS ================= */
+const Auth = {
+    init: () => {
+        const stored = localStorage.getItem('snk_uid_godx');
+        if(stored) { State.user = stored; UI.enterApp(); }
+        else { document.getElementById('authLayer').classList.add('active'); }
+        UI.loadTheme(); // Load theme on init
+    },
+    login: () => {
+        const u = document.getElementById('lUser').value.trim().toLowerCase();
+        const p = document.getElementById('lPass').value;
+        if(u && localStorage.getItem('snk_key_godx_' + u) === p) {
+            document.getElementById('loginBtn').innerText = "Authenticating...";
+            setTimeout(() => { localStorage.setItem('snk_uid_godx', u); State.user = u; UI.enterApp(); }, 800);
+        } else { alert('Access Denied. Invalid Credentials.'); }
+    },
+    register: () => {
+        const u = document.getElementById('rUser').value.trim().toLowerCase();
+        const p = document.getElementById('rPass').value;
+        if(!u || !p) return alert('Missing Information.');
+        if(localStorage.getItem('snk_key_godx_' + u)) return alert('Identity exists.');
+       
+        localStorage.setItem('snk_key_godx_' + u, p);
+        UI.showToast('Identity Secured.');
+        UI.switchAuth('login');
+    },
+    logout: () => { localStorage.removeItem('snk_uid_godx'); location.reload(); }
+};
+const App = {
+    loadData: () => {
+        try {
+            const c = localStorage.getItem(`cart_gx_${State.user}`);
+            const w = localStorage.getItem(`wish_gx_${State.user}`);
+            const o = localStorage.getItem(`ord_gx_${State.user}`);
+            const x = localStorage.getItem(`xp_gx_${State.user}`); // XP Load
+            if(c) State.cart = JSON.parse(c);
+            if(w) State.wishlist = JSON.parse(w);
+            if(o) State.orders = JSON.parse(o);
+            if(x) State.xp = parseInt(x);
+        } catch(e) {}
+        Cart.updateUI(); Wishlist.updateUI(); Profile.updateUI();
+    },
+    saveData: () => {
+        localStorage.setItem(`cart_gx_${State.user}`, JSON.stringify(State.cart));
+        localStorage.setItem(`wish_gx_${State.user}`, JSON.stringify(State.wishlist));
+        localStorage.setItem(`ord_gx_${State.user}`, JSON.stringify(State.orders));
+        localStorage.setItem(`xp_gx_${State.user}`, State.xp.toString()); // XP Save
+    },
+    addTiltEffect: () => {
+        // 3D Tilt Logic
+        document.querySelectorAll('.card').forEach(card => {
+            if(card.classList.contains('disabled')) return;
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -10;
+                const rotateY = ((x - centerX) / centerX) * 10;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+            });
+        });
+    },
+    applyFilters: () => {
+        State.search = document.getElementById('searchInput').value.toLowerCase();
+        State.sort = document.getElementById('sortInput').value;
+       
+        let result = DB.filter(item => {
+            const matchB = State.brand === 'all' || item.b === State.brand;
+            const matchS = item.n.toLowerCase().includes(State.search);
+            return matchB && matchS;
+        });
+        if(State.sort === 'low') result.sort((a,b) => a.p - b.p);
+        if(State.sort === 'high') result.sort((a,b) => b.p - a.p);
+        const grid = document.getElementById('productGrid');
+        if(result.length === 0) { grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px; color:var(--text-mute); font-size:18px;">NO ARCHIVES FOUND.</div>`; return; }
+        grid.innerHTML = result.map(s => {
+            const isWished = State.wishlist.includes(s.id);
+            const isLowStock = s.stock < 5 && s.stock > 0;
+            const isOut = s.stock === 0;
+           
+            return `
+            <div class="card ${isOut ? 'disabled' : ''}" onclick="Modal.open('${s.id}')">
+                <div class="card-header">
+                    <div class="brand-tag">${s.b}</div>
+                    ${isLowStock ? '<div class="stock-badge low">⚠ LOW STOCK</div>' : ''}
+                    ${isOut ? '<div class="stock-badge out">SOLD OUT</div>' : ''}
+                    <i class="${isWished ? 'fas' : 'far'} fa-heart wishlist-btn ${isWished ? 'active' : ''}" onclick="Wishlist.toggle('${s.id}', event)"></i>
+                </div>
+                <div class="card-img"><img src="${s.i}" loading="lazy"></div>
+                <div class="card-name">${s.n}</div>
+                <div class="card-rating"><i class="fas fa-star"></i> ${s.r} <span>(${s.rc})</span></div>
+                <div class="card-bottom">
+                    <div class="card-price">฿${s.p.toLocaleString()}</div>
+                    ${!isOut ? `<button class="add-btn-small" onclick="Modal.open('${s.id}'); event.stopPropagation();"><i class="fas fa-plus"></i></button>` : ''}
+                </div>
+            </div>
+        `}).join('');
+       
+        App.addTiltEffect(); // Apply 3D physics
+    },
+    setBrand: (brand, el) => {
+        State.brand = brand;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        App.applyFilters();
+    },
+    reset: () => {
+        State.search = '';
+        document.getElementById('searchInput').value = '';
+        State.sort = 'def'; document.getElementById('sortInput').value = 'def';
+        document.querySelector('.tab').click(); window.scrollTo({top:0, behavior:'smooth'});
+    }
+};
+const Modal = {
+    open: (id) => {
+        const item = DB.find(x => x.id === id);
+        if(item.stock === 0) return UI.showToast("Product is Out of Stock");
+        State.activeItem = item;
+        State.activeSize = null;
+       
+        document.getElementById('mImg').src = item.i;
+        document.getElementById('mBrand').innerText = item.b;
+        document.getElementById('mName').innerText = item.n;
+        document.getElementById('mPrice').innerText = `฿${item.p.toLocaleString()}`;
+        document.getElementById('mReviews').innerText = `(${item.rc} Reviews)`;
+       
+        const wBtn = document.getElementById('mWishBtn');
+        if(State.wishlist.includes(item.id)) { wBtn.innerHTML = '<i class="fas fa-heart" style="color:var(--neon-red)"></i>'; wBtn.style.borderColor = 'var(--border-light)'; }
+        else { wBtn.innerHTML = '<i class="far fa-heart"></i>'; wBtn.style.borderColor = 'var(--border-light)'; }
+       
+        document.getElementById('sizeGrid').innerHTML = ALL_SIZES.map(sz => {
+            const hasStock = item.s.includes(sz);
+            return `<div class="size-box ${!hasStock?'disabled':''}" onclick="Modal.pickSize(${sz}, this)">${sz}</div>`;
+        }).join('');
+       
+        Modal.updateBtn();
+        UI.openOverlay('productModal');
+    },
+    pickSize: (sz, el) => {
+        if(el.classList.contains('disabled')) return;
+        document.querySelectorAll('.size-box').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        State.activeSize = sz;
+        Modal.updateBtn();
+    },
+    updateBtn: () => {
+        const btn = document.getElementById('addBtn');
+        if(State.activeSize) {
+            btn.disabled = false;
+            btn.innerText = `Add Size ${State.activeSize} to Bag`;
+            btn.style.background = 'var(--primary)'; btn.style.color = 'var(--bg-base)';
+        } else {
+            btn.disabled = true;
+            btn.innerText = "Select a Size";
+            btn.style.background = 'var(--primary)'; btn.style.color = 'var(--bg-base)';
+        }
+    }
+};
+const Wishlist = {
+    toggle: (id, e) => {
+        if(e) { e.stopPropagation(); e.preventDefault(); }
+        const idx = State.wishlist.indexOf(id);
+        if(idx > -1) { State.wishlist.splice(idx, 1); UI.showToast('Removed from Wishlist'); }
+        else { State.wishlist.push(id); UI.showToast('Saved to Wishlist'); }
+        App.saveData(); App.applyFilters(); Wishlist.updateUI();
+        if(State.activeItem && State.activeItem.id === id) Modal.open(id);
+    },
+    toggleModal: () => { if(State.activeItem) Wishlist.toggle(State.activeItem.id); },
+    updateUI: () => {
+        const list = document.getElementById('wishList');
+        document.getElementById('wishBadge').innerText = State.wishlist.length;
+        document.getElementById('wishBadge').style.display = State.wishlist.length > 0 ? 'flex' : 'none';
+       
+        if(State.wishlist.length === 0) { list.innerHTML = '<div style="text-align:center; padding:60px 20px; color:var(--text-mute);"><i class="far fa-heart" style="font-size:50px; margin-bottom:15px;"></i><p style="font-size:16px;">No saved items.</p></div>'; return; }
+       
+        list.innerHTML = State.wishlist.map(id => {
+            const item = DB.find(x => x.id === id);
+            if(!item) return '';
+            return `
+            <div class="c-item" style="cursor:none;" onclick="Modal.open('${item.id}')">
+                <img src="${item.i}">
+                <div class="c-info">
+                    <div class="c-title">${item.n}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                        <span style="font-family:'Space Grotesk'; font-weight:800; font-size:18px;">฿${item.p.toLocaleString()}</span>
+                        <i class="fas fa-heart" style="color:var(--neon-red); font-size:20px; transition:0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'" onclick="Wishlist.toggle('${item.id}', event)"></i>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+};
+const Profile = {
+    getLevelData: () => {
+        const xp = State.xp;
+        if(xp >= 5000) return { title: 'CYBER GOD', color: '#ff003c', max: 10000 };
+        if(xp >= 2000) return { title: 'LEGEND', color: '#ffd700', max: 5000 };
+        if(xp >= 500) return { title: 'ELITE COLLECTOR', color: '#00f0ff', max: 2000 };
+        return { title: 'ROOKIE', color: '#00ff9d', max: 500 };
+    },
+    updateUI: () => {
+        document.getElementById('profileName').innerText = State.user;
+       
+        // Update XP Bar
+        const lvl = Profile.getLevelData();
+        const percent = Math.min((State.xp / lvl.max) * 100, 100);
+        document.getElementById('xpFill').style.width = `${percent}%`;
+        document.getElementById('xpFill').style.background = lvl.color;
+        document.getElementById('xpFill').style.boxShadow = `0 0 10px ${lvl.color}`;
+        document.getElementById('lvlLabel').innerText = lvl.title;
+        document.getElementById('lvlLabel').style.color = lvl.color;
+        document.getElementById('xpLabel').innerText = `${State.xp.toLocaleString()} / ${lvl.max.toLocaleString()} XP`;
+        const list = document.getElementById('orderHistory');
+        if(State.orders.length === 0) { list.innerHTML = '<div style="text-align:center; padding:60px 20px; color:var(--text-mute);"><i class="fas fa-box" style="font-size:50px; margin-bottom:15px;"></i><p style="font-size:16px;">No recent orders.</p></div>'; return; }
+       
+        list.innerHTML = [...State.orders].reverse().map(ord => `
+            <div class="history-item">
+                <div class="history-header"><span>ORDER #${ord.id}</span> <span style="color:#10b981; font-weight:700;"><i class="fas fa-check-circle"></i> SUCCESS</span></div>
+                <div style="font-size:14px; margin-bottom:8px; color:var(--text-main);">${ord.items} Items</div>
+                <div style="font-family:'Space Grotesk'; font-weight:800; font-size:22px;">฿${ord.total.toLocaleString()}</div>
+            </div>
+        `).join('');
+    }
+};
+const Cart = {
+    add: () => {
+        const exist = State.cart.find(x => x.id === State.activeItem.id && x.size === State.activeSize);
+        if(exist) exist.qty++; else State.cart.push({...State.activeItem, size: State.activeSize, qty: 1});
+        App.saveData(); UI.closeAll(); UI.showToast('ADDED TO BAG'); Cart.updateUI();
+    },
+    changeQty: (idx, amt) => {
+        State.cart[idx].qty += amt;
+        if(State.cart[idx].qty <= 0) State.cart.splice(idx, 1);
+        App.saveData(); Cart.updateUI();
+    },
+    applyPromo: () => {
+        const code = document.getElementById('promoInput').value.toUpperCase().trim();
+        const msg = document.getElementById('promoMsg');
+       
+        if(code === 'TIMESUDLNW') {
+            State.promoMult = 0.5;
+            msg.innerText = "TIMESUDLNW: 50% OFF ACTIVATED!";
+            msg.style.display = 'block'; msg.style.color = 'var(--neon-blue)';
+        }
+        else if(code === 'AKITUAHOD') {
+            State.promoMult = 0;
+            msg.innerText = "AKITUAHOD VIP: 100% FREE!";
+            msg.style.display = 'block'; msg.style.color = '#10b981';
+        }
+        else {
+            State.promoMult = 1;
+            msg.innerText = "Invalid Promo Code";
+            msg.style.display = 'block'; msg.style.color = 'var(--neon-red)';
+        }
+        Cart.updateUI();
+    },
+    updateUI: () => {
+        document.getElementById('cartBadge').innerText = State.cart.reduce((a,b)=>a+b.qty, 0);
+        const list = document.getElementById('cartList');
+       
+        if(State.cart.length === 0) {
+            list.innerHTML = `<div style="text-align:center; padding:80px 20px; color:var(--text-mute);"><i class="fas fa-shopping-bag" style="font-size:60px; margin-bottom:20px;"></i><p style="font-size:18px;">Your bag is empty.</p></div>`;
+            document.getElementById('cSub').innerText = '฿0'; document.getElementById('cDisc').innerText = '฿0'; document.getElementById('cTotal').innerText = '฿0';
+            return;
+        }
+        list.innerHTML = State.cart.map((item, i) => `
+            <div class="c-item">
+                <img src="${item.i}">
+                <div class="c-info">
+                    <div class="c-title">${item.n}</div>
+                    <div class="c-meta">Size: EU ${item.size}</div>
+                    <div class="c-price-row">
+                        <span style="font-family:'Space Grotesk'; font-weight:800; font-size:18px;">฿${(item.p * item.qty).toLocaleString()}</span>
+                        <div class="qty-ctrl">
+                            <i class="fas fa-minus" onclick="Cart.changeQty(${i}, -1)"></i>
+                            <span>${item.qty}</span>
+                            <i class="fas fa-plus" onclick="Cart.changeQty(${i}, 1)"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        const sub = State.cart.reduce((a,b)=>a+(b.p*b.qty), 0);
+        const discount = sub - (sub * State.promoMult);
+        const total = sub - discount;
+        document.getElementById('cSub').innerText = `฿${sub.toLocaleString()}`;
+        document.getElementById('cDisc').innerText = `- ฿${discount.toLocaleString()}`;
+        document.getElementById('cTotal').innerText = `฿${total.toLocaleString()}`;
+    }
+};
+const Checkout = {
+    init: () => {
+        if(State.cart.length === 0) return UI.showToast("Your bag is empty.");
+        UI.closeAll();
+       
+        const layer = document.getElementById('checkoutOverlay');
+        const icon = document.getElementById('chkIcon');
+        const text = document.getElementById('chkText');
+        const sub = document.getElementById('chkSub');
+       
+        layer.classList.add('active');
+        icon.className = "fas fa-credit-card scan-icon"; icon.style.color = "var(--primary)";
+        text.innerText = "ENTER PAYMENT DETAILS";
+        sub.style.display = "block";
+        document.getElementById('paymentForm').style.display = 'flex';
+        document.getElementById('paymentError').style.display = 'none';
+        // Clear inputs
+        document.getElementById('cardNumber').value = '';
+        document.getElementById('expiry').value = '';
+        document.getElementById('cvv').value = '';
+    },
+    processPayment: () => {
+        const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        const expiry = document.getElementById('expiry').value;
+        const cvv = document.getElementById('cvv').value;
+        const error = document.getElementById('paymentError');
+       
+        if (!Checkout.validateCard(cardNumber, expiry, cvv)) {
+            error.style.display = 'block';
+            return;
+        }
+       
+        error.style.display = 'none';
+        document.getElementById('paymentForm').style.display = 'none';
+        const icon = document.getElementById('chkIcon');
+        const text = document.getElementById('chkText');
+        const sub = document.getElementById('chkSub');
+       
+        sub.innerHTML = "<div style='color:var(--text-mute); font-size:16px;'>Processing payment...</div>";
+        icon.className = "fas fa-circle-notch fa-spin scan-icon";
+        icon.style.color = "var(--neon-blue)";
+        text.innerText = "PROCESSING PAYMENT";
+       
+        setTimeout(() => Checkout.execute(), 2500);
+    },
+    validateCard: (cardNumber, expiry, cvv) => {
+        // Simple validation: card number (Luhn algorithm), expiry (future date), CVV (3-4 digits)
+        if (!/^\d{13,19}$/.test(cardNumber) || !Checkout.luhnCheck(cardNumber)) return false;
+        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry)) return false;
+        const [month, year] = expiry.split('/').map(Number);
+        const now = new Date();
+        if (year < (now.getFullYear() % 100) || (year === (now.getFullYear() % 100) && month < now.getMonth() + 1)) return false;
+        if (!/^\d{3,4}$/.test(cvv)) return false;
+        return true;
+    },
+    luhnCheck: (num) => {
+        let sum = 0;
+        let isEven = false;
+        for (let i = num.length - 1; i >= 0; i--) {
+            let digit = parseInt(num[i], 10);
+            if (isEven) {
+                digit *= 2;
+                if (digit > 9) digit -= 9;
+            }
+            sum += digit;
+            isEven = !isEven;
+        }
+        return sum % 10 === 0;
+    },
+    execute: () => {
+        if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // Success Haptic
+        const icon = document.getElementById('chkIcon');
+        const text = document.getElementById('chkText');
+        const sub = document.getElementById('chkSub');
+        sub.innerHTML = "<div style='color:var(--text-mute); font-size:16px;'>Encrypting transaction...</div>";
+        icon.className = "fas fa-circle-notch fa-spin scan-icon";
+        icon.style.color = "var(--neon-blue)";
+        text.innerText = "PROCESSING PAYMENT";
+        setTimeout(() => {
+            icon.className = "fas fa-check-circle scan-icon success";
+            icon.style.color = "#10b981";
+           
+            const hash = "0x" + Math.random().toString(16).substr(2, 8).toUpperCase() + "..." + Math.random().toString(16).substr(2, 4).toUpperCase();
+            text.innerText = "PAYMENT SUCCESSFUL";
+           
+            const subAmt = State.cart.reduce((a,b)=>a+(b.p*b.qty), 0);
+            const total = subAmt * State.promoMult;
+            const earnedXP = Math.floor(total / 100); // 100 Baht = 1 XP
+            State.xp += earnedXP;
+            sub.innerHTML = `
+                <div style='color:#10b981; margin-top:10px; font-family:"Space Grotesk";'>TXN HASH: ${hash}</div>
+                <div style='color:var(--neon-gold); margin-top:10px; font-weight:bold; font-size:18px;'>+${earnedXP} XP EARNED</div>
+            `;
+            State.orders.push({ id: Math.floor(Math.random() * 900000)+100000, items: State.cart.reduce((a,b)=>a+b.qty,0), total: total });
+           
+            State.cart = []; State.promoMult = 1; document.getElementById('promoInput').value = ''; document.getElementById('promoMsg').style.display='none';
+            App.saveData(); Profile.updateUI(); Cart.updateUI();
+       
+            setTimeout(() => {
+                document.getElementById('checkoutOverlay').classList.remove('active');
+                UI.showToast("Receipt saved to profile");
+            }, 3000);
+        }, 2500);
+    }
+}
+// --- UI CONTROLLER ---
+const UI = {
+    switchAuth: (mode) => {
+        document.getElementById('loginForm').style.display = mode === 'reg' ? 'none' : 'block';
+        document.getElementById('regForm').style.display = mode === 'reg' ? 'block' : 'none';
+    },
+    enterApp: () => {
+        document.getElementById('authLayer').classList.remove('active');
+        document.getElementById('appLayer').style.display = 'block';
+        App.loadData();
+        App.applyFilters();
+        setTimeout(() => { document.getElementById('authLayer').style.display = 'none'; document.getElementById('appLayer').style.opacity = '1'; }, 500);
+    },
+    openOverlay: (elId) => {
+        UI.closeAll();
+        document.getElementById('globalOverlay').classList.add('active');
+        document.getElementById(elId).classList.add('active');
+        document.body.classList.add('locked');
+    },
+    openDrawer: (id) => { UI.openOverlay(id); },
+    closeAll: () => {
+        document.getElementById('globalOverlay').classList.remove('active');
+        document.getElementById('productModal').classList.remove('active');
+        document.querySelectorAll('.drawer').forEach(d => { d.classList.remove('active'); });
+        document.body.classList.remove('locked');
+    },
+    showToast: (msg) => {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    },
+    toggleTheme: () => {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        const themeIcon = document.querySelector('.nav-tools .icon-btn:last-child i');
+        themeIcon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+    },
+    loadTheme: () => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            const themeIcon = document.querySelector('.nav-tools .icon-btn:last-child i');
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+};
+// Input formatting for card number and expiry
+document.addEventListener('input', (e) => {
+    if (e.target.id === 'cardNumber') {
+        e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ');
+    } else if (e.target.id === 'expiry') {
+        e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{2})(\d{0,2})/, '$1/$2');
+    } else if (e.target.id === 'cvv') {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    }
+});
+</script>
+</body>
+</html>
