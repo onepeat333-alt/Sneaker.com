@@ -16,7 +16,7 @@
             --neon-red: #ff003c;
             --neon-blue: #00f0ff;
             --neon-gold: #ffd700;
-            --neon-green: #00ff9d; /* NEW */
+            --neon-green: #00ff9d;
             --text-main: #f5f5f7;
             --text-mute: #86868b;
             --border-light: rgba(255, 255, 255, 0.1);
@@ -284,7 +284,7 @@
         .xp-bar-bg { width: 100%; height: 6px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; position: relative; }
         .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-green)); width: 0%; transition: width 1s ease; box-shadow: 0 0 10px var(--neon-green); }
         .xp-text { font-size: 12px; color: var(--text-mute); margin-top: 8px; display: flex; justify-content: space-between; }
-        /* --- CHECKOUT FX (HOLD TO CONFIRM) --- */
+        /* --- CHECKOUT (NEW STANDARD) --- */
         #checkoutOverlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999;
             display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;
@@ -292,23 +292,16 @@
         }
         #checkoutOverlay.active { opacity: 1; pointer-events: auto; }
        
-        .hold-btn {
-            margin-top: 30px; padding: 20px 50px; border: 2px solid var(--neon-red);
-            color: var(--neon-red); border-radius: 50px; font-family: 'Space Grotesk'; font-weight: 900;
-            cursor: none; position: relative; overflow: hidden; transition: 0.3s;
-            text-transform: uppercase; letter-spacing: 3px; font-size: 18px;
-            user-select: none; -webkit-user-select: none;
-        }
-        .hold-btn::before {
-            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%;
-            background: var(--neon-red); z-index: -1; transition: width 2s linear;
-        }
-        .hold-btn.holding { color: var(--bg-base); box-shadow: 0 0 30px rgba(255,0,60,0.6); transform: scale(0.95); }
-        .hold-btn.holding::before { width: 100%; }
-        .scan-icon { font-size: 80px; color: var(--primary); margin-bottom: 20px; transition: 0.5s; }
-        .scan-icon.scanning { animation: retinalScan 1.5s infinite alternate; color: var(--neon-blue); filter: drop-shadow(0 0 30px var(--neon-blue)); }
+        .payment-form { display: flex; flex-direction: column; gap: 15px; width: 100%; margin: 20px 0; }
+        .payment-form label { font-size: 14px; color: var(--text-mute); margin-bottom: 5px; display: block; font-weight:600; }
+        .payment-form input { width: 100%; }
+        .payment-form .expiry-cvv { display: flex; gap: 15px; }
+        .payment-form .expiry-cvv div { flex: 1; }
+        .payment-error { color: var(--neon-red); font-size: 14px; margin-top: 10px; text-align: center; display: none; }
+        
+        .scan-icon { transition: 0.3s; }
         .scan-icon.success { color: #10b981; filter: drop-shadow(0 0 40px #10b981); transform: scale(1.2); }
-        @keyframes retinalScan { 0% { transform: scale(0.9); } 100% { transform: scale(1.1); } }
+
         /* --- TOAST --- */
         #toast {
             position: fixed; bottom: 40px; left: 50%; transform: translate(-50%, 100px);
@@ -400,13 +393,6 @@
         body.light-mode #toast { background: var(--primary); color: var(--bg-base); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
         body.light-mode .bg-mesh { background: radial-gradient(circle at 50% 0%, rgba(240,240,245,1) 0%, var(--bg-base) 80%); }
         body.light-mode .grid-overlay { opacity: 0.1; }
-        /* --- PAYMENT FORM --- */
-        .payment-form { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 400px; margin: 20px 0; }
-        .payment-form label { font-size: 14px; color: var(--text-mute); margin-bottom: 5px; display: block; }
-        .payment-form input { width: 100%; }
-        .payment-form .expiry-cvv { display: flex; gap: 15px; }
-        .payment-form .expiry-cvv div { flex: 1; }
-        .payment-error { color: var(--neon-red); font-size: 14px; margin-top: 10px; text-align: center; display: none; }
     </style>
 </head>
 <body>
@@ -563,25 +549,46 @@
     <div class="cart-items" id="orderHistory" style="flex:none; height:220px;"></div>
     <button class="btn-outline" style="margin-top:auto; border-color:var(--neon-red); color:var(--neon-red);" onclick="Auth.logout()">SIGN OUT</button>
 </div>
+
 <div id="checkoutOverlay">
-    <i class="fas fa-fingerprint scan-icon" id="chkIcon"></i>
-    <h2 class="title-font" id="chkText" style="letter-spacing:3px; font-size: 28px;">PAYMENT GATEWAY</h2>
-    <div id="chkSub">
-        <div class="payment-form" id="paymentForm">
-            <label for="cardNumber">Card Number</label>
-            <input type="text" id="cardNumber" class="input-clean" placeholder="1234 5678 9012 3456" maxlength="19">
-            <div class="expiry-cvv">
-                <div>
-                    <label for="expiry">Expiry Date</label>
-                    <input type="text" id="expiry" class="input-clean" placeholder="MM/YY" maxlength="5">
-                </div>
-                <div>
-                    <label for="cvv">CVV</label>
-                    <input type="text" id="cvv" class="input-clean" placeholder="123" maxlength="4">
+    <div class="auth-box" style="width: 90%; max-width: 500px; padding: 40px; position: relative;">
+        <i class="fas fa-times" onclick="document.getElementById('checkoutOverlay').classList.remove('active')" style="position:absolute; top:20px; right:20px; font-size:24px; color:var(--text-mute); cursor:pointer;"></i>
+        
+        <i class="fas fa-shield-alt scan-icon" id="chkIcon" style="font-size: 50px;"></i>
+        <h2 class="title-font" id="chkText" style="margin-bottom: 30px; margin-top: 15px; letter-spacing: 2px;">SECURE CHECKOUT</h2>
+        
+        <div id="chkSub">
+            <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+                <button class="tab active" style="flex:1; padding: 10px; text-align: center;" onclick="Checkout.setMethod('card', this)">CARD</button>
+                <button class="tab" style="flex:1; padding: 10px; text-align: center;" onclick="Checkout.setMethod('qr', this)">QR PAY</button>
+            </div>
+
+            <div id="cardForm">
+                <div class="payment-form">
+                    <div style="text-align: left;">
+                        <label>CARD NUMBER</label>
+                        <input type="text" id="cardNumber" class="input-clean" placeholder="**** **** **** ****" maxlength="19">
+                    </div>
+                    <div class="expiry-cvv">
+                        <div style="text-align: left;">
+                            <label>EXPIRY</label>
+                            <input type="text" id="expiry" class="input-clean" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        <div style="text-align: left;">
+                            <label>CVV</label>
+                            <input type="text" id="cvv" class="input-clean" placeholder="***" maxlength="3">
+                        </div>
+                    </div>
+                    <div id="paymentError" class="payment-error" style="color: var(--neon-red); font-size: 13px; display: none;">Invalid card details.</div>
+                    <button class="btn-solid" onclick="Checkout.processPayment()" style="margin-top: 10px;">CONFIRM PAYMENT</button>
                 </div>
             </div>
-            <div id="paymentError" class="payment-error">Invalid card details. Please try again.</div>
-            <button class="btn-solid" id="payBtn" onclick="Checkout.processPayment()">PAY NOW</button>
+
+            <div id="qrForm" style="display: none; padding: 20px;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SNEAKER-COM-PROMPT-PAY" style="width: 200px; border: 10px solid white; border-radius: 10px;">
+                <p style="margin-top: 15px; color: var(--text-mute);">Scan to pay with PromptPay</p>
+                <button class="btn-outline" onclick="Checkout.execute()" style="margin-top: 20px;">I HAVE PAID</button>
+            </div>
         </div>
     </div>
 </div>
@@ -944,111 +951,87 @@ const Cart = {
         document.getElementById('cTotal').innerText = `฿${total.toLocaleString()}`;
     }
 };
+
+/* --- NEW STANDARD CHECKOUT LOGIC --- */
 const Checkout = {
+    method: 'card',
+
     init: () => {
         if(State.cart.length === 0) return UI.showToast("Your bag is empty.");
         UI.closeAll();
-       
-        const layer = document.getElementById('checkoutOverlay');
-        const icon = document.getElementById('chkIcon');
-        const text = document.getElementById('chkText');
-        const sub = document.getElementById('chkSub');
-       
-        layer.classList.add('active');
-        icon.className = "fas fa-credit-card scan-icon"; icon.style.color = "var(--primary)";
-        text.innerText = "ENTER PAYMENT DETAILS";
-        sub.style.display = "block";
-        document.getElementById('paymentForm').style.display = 'flex';
-        document.getElementById('paymentError').style.display = 'none';
-        // Clear inputs
-        document.getElementById('cardNumber').value = '';
-        document.getElementById('expiry').value = '';
-        document.getElementById('cvv').value = '';
+        document.getElementById('checkoutOverlay').classList.add('active');
+        Checkout.setMethod('card', document.querySelector('#chkSub .tab'));
     },
+
+    setMethod: (m, el) => {
+        Checkout.method = m;
+        // Reset tab styles
+        document.querySelectorAll('#chkSub .tab').forEach(t => t.classList.remove('active'));
+        // Set active tab if element is passed
+        if(el) el.classList.add('active'); 
+        else if (m === 'card') document.querySelectorAll('#chkSub .tab')[0].classList.add('active');
+        else document.querySelectorAll('#chkSub .tab')[1].classList.add('active');
+
+        document.getElementById('cardForm').style.display = m === 'card' ? 'block' : 'none';
+        document.getElementById('qrForm').style.display = m === 'qr' ? 'block' : 'none';
+    },
+
     processPayment: () => {
-        const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
-        const expiry = document.getElementById('expiry').value;
-        const cvv = document.getElementById('cvv').value;
-        const error = document.getElementById('paymentError');
-       
-        if (!Checkout.validateCard(cardNumber, expiry, cvv)) {
-            error.style.display = 'block';
+        const num = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        const exp = document.getElementById('expiry').value;
+        const cv = document.getElementById('cvv').value;
+        const err = document.getElementById('paymentError');
+
+        // Basic Validation
+        if(num.length < 16 || exp.length < 5 || cv.length < 3) {
+            err.style.display = 'block';
             return;
         }
-       
-        error.style.display = 'none';
-        document.getElementById('paymentForm').style.display = 'none';
-        const icon = document.getElementById('chkIcon');
-        const text = document.getElementById('chkText');
-        const sub = document.getElementById('chkSub');
-       
-        sub.innerHTML = "<div style='color:var(--text-mute); font-size:16px;'>Processing payment...</div>";
-        icon.className = "fas fa-circle-notch fa-spin scan-icon";
-        icon.style.color = "var(--neon-blue)";
-        text.innerText = "PROCESSING PAYMENT";
-       
-        setTimeout(() => Checkout.execute(), 2500);
+
+        err.style.display = 'none';
+        const btn = document.querySelector('#cardForm .btn-solid');
+        btn.innerText = "PROCESSING...";
+        btn.disabled = true;
+
+        setTimeout(() => Checkout.execute(), 2000);
     },
-    validateCard: (cardNumber, expiry, cvv) => {
-        // Simple validation: card number (Luhn algorithm), expiry (future date), CVV (3-4 digits)
-        if (!/^\d{13,19}$/.test(cardNumber) || !Checkout.luhnCheck(cardNumber)) return false;
-        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry)) return false;
-        const [month, year] = expiry.split('/').map(Number);
-        const now = new Date();
-        if (year < (now.getFullYear() % 100) || (year === (now.getFullYear() % 100) && month < now.getMonth() + 1)) return false;
-        if (!/^\d{3,4}$/.test(cvv)) return false;
-        return true;
-    },
-    luhnCheck: (num) => {
-        let sum = 0;
-        let isEven = false;
-        for (let i = num.length - 1; i >= 0; i--) {
-            let digit = parseInt(num[i], 10);
-            if (isEven) {
-                digit *= 2;
-                if (digit > 9) digit -= 9;
-            }
-            sum += digit;
-            isEven = !isEven;
-        }
-        return sum % 10 === 0;
-    },
+
     execute: () => {
-        if(navigator.vibrate) navigator.vibrate([100, 50, 100]); // Success Haptic
-        const icon = document.getElementById('chkIcon');
-        const text = document.getElementById('chkText');
-        const sub = document.getElementById('chkSub');
-        sub.innerHTML = "<div style='color:var(--text-mute); font-size:16px;'>Encrypting transaction...</div>";
-        icon.className = "fas fa-circle-notch fa-spin scan-icon";
-        icon.style.color = "var(--neon-blue)";
-        text.innerText = "PROCESSING PAYMENT";
+        if(navigator.vibrate) navigator.vibrate(200);
+        
+        const subAmt = State.cart.reduce((a,b)=>a+(b.p*b.qty), 0);
+        const total = subAmt * State.promoMult;
+        const earnedXP = Math.floor(total / 100); 
+        
+        State.xp += earnedXP;
+        State.orders.push({ 
+            id: Math.floor(Math.random() * 899999) + 100000, 
+            items: State.cart.reduce((a,b)=>a+b.qty, 0), 
+            total: total 
+        });
+
+        // Show Success UI inside the modal
+        document.getElementById('chkSub').innerHTML = `
+            <div style="padding: 40px 0;">
+                <i class="fas fa-check-circle success" style="font-size: 60px; color: #10b981; margin-bottom: 20px;"></i>
+                <h2 class="title-font">PAYMENT SUCCESS</h2>
+                <div style="color:var(--text-mute); margin-top:5px;">Transaction ID: #${Math.floor(Math.random()*10000000)}</div>
+                <p style="color: var(--neon-gold); font-weight: 800; font-size: 20px; margin-top: 20px;">+${earnedXP} XP EARNED</p>
+            </div>
+        `;
+
+        State.cart = [];
+        State.promoMult = 1;
+        App.saveData();
+        Profile.updateUI();
+        Cart.updateUI();
+
         setTimeout(() => {
-            icon.className = "fas fa-check-circle scan-icon success";
-            icon.style.color = "#10b981";
-           
-            const hash = "0x" + Math.random().toString(16).substr(2, 8).toUpperCase() + "..." + Math.random().toString(16).substr(2, 4).toUpperCase();
-            text.innerText = "PAYMENT SUCCESSFUL";
-           
-            const subAmt = State.cart.reduce((a,b)=>a+(b.p*b.qty), 0);
-            const total = subAmt * State.promoMult;
-            const earnedXP = Math.floor(total / 100); // 100 Baht = 1 XP
-            State.xp += earnedXP;
-            sub.innerHTML = `
-                <div style='color:#10b981; margin-top:10px; font-family:"Space Grotesk";'>TXN HASH: ${hash}</div>
-                <div style='color:var(--neon-gold); margin-top:10px; font-weight:bold; font-size:18px;'>+${earnedXP} XP EARNED</div>
-            `;
-            State.orders.push({ id: Math.floor(Math.random() * 900000)+100000, items: State.cart.reduce((a,b)=>a+b.qty,0), total: total });
-           
-            State.cart = []; State.promoMult = 1; document.getElementById('promoInput').value = ''; document.getElementById('promoMsg').style.display='none';
-            App.saveData(); Profile.updateUI(); Cart.updateUI();
-       
-            setTimeout(() => {
-                document.getElementById('checkoutOverlay').classList.remove('active');
-                UI.showToast("Receipt saved to profile");
-            }, 3000);
-        }, 2500);
+            location.reload(); // Reload to refresh everything
+        }, 3000);
     }
-}
+};
+
 // --- UI CONTROLLER ---
 const UI = {
     switchAuth: (mode) => {
@@ -1073,6 +1056,7 @@ const UI = {
         document.getElementById('globalOverlay').classList.remove('active');
         document.getElementById('productModal').classList.remove('active');
         document.querySelectorAll('.drawer').forEach(d => { d.classList.remove('active'); });
+        document.getElementById('checkoutOverlay').classList.remove('active');
         document.body.classList.remove('locked');
     },
     showToast: (msg) => {
